@@ -40,10 +40,11 @@ public class PlayerScript : MonoBehaviour
 
     void LookAtmouse()
     {
-        var dir = Input.mousePosition - transform.position;
 
-        var angle = Mathf.Atan2(dir.y, dir.x);
-        transform.rotation = Quaternion.Euler(0f, 0f, angle * Mathf.Rad2Deg);
+        var angle = Mathf.Atan2(Screen.height/2-Input.mousePosition.y, Screen.width/2-Input.mousePosition.x);
+        
+        //Debug.Log(angle+"   "+Screen.height+","+Screen.width);
+        transform.rotation = Quaternion.Euler(0f, 0f, (angle-Mathf.PI) * Mathf.Rad2Deg);
     }
 
 

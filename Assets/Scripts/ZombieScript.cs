@@ -13,11 +13,19 @@ public class ZombieScript : MonoBehaviour
     private float WanderSpeed = 5.0f;
     [SerializeField]
     private int WanderingDecisionInterval = 100;
+    [SerializeField]
+    private float SightDistance = 10;
+    [SerializeField]
+    private ContactFilter2D IgnoreMyself;
 
     private int WanderTimer;
     private int WanderDecisionMakingTime;
     private int RandomNum;
     private Vector2 CurrentDirection;
+    private float Rotation;
+    private float CurrentSpeed;
+
+
 
     public enum ZombieState
     {
@@ -33,6 +41,7 @@ public class ZombieScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Rotation = 0;
         WanderTimer = 0;
         CurrentState = ZombieState.Wandering;
         WanderDecisionMakingTime = Random.Range(0, WanderingDecisionInterval);
@@ -44,10 +53,10 @@ public class ZombieScript : MonoBehaviour
         switch (CurrentState)
         {
             case ZombieState.Wandering: UpdateWanderState(); break;
-
-
         }
+
         Movement();
+        PlayerDetected();
     }
 
 
@@ -58,10 +67,39 @@ public class ZombieScript : MonoBehaviour
     {
 
         if (CurrentState == ZombieState.Wandering)
-            ZombieRigidBody2D.velocity = CurrentDirection * WanderSpeed;
+            CurrentSpeed = WanderSpeed;
         else
-            ZombieRigidBody2D.velocity = CurrentDirection * ChaseSpeed;
+            CurrentSpeed = ChaseSpeed;
+
+        ZombieRigidBody2D.velocity = CurrentDirection * CurrentSpeed;
+
+        transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(CurrentDirection.y,CurrentDirection.x)*Mathf.Rad2Deg);
     }
+
+
+
+
+
+    private void PlayerDetected()
+    {
+        int HitAmount;
+        RaycastHit2D[] Hitinfo = new RaycastHit2D[10];
+        HitAmount = Physics2D.Raycast(transform.position, transform.right,IgnoreMyself,Hitinfo , SightDistance);
+
+        //Debug.Log(this.name+" sees: "+Hitinfo[0].collider.gameObject.name);
+        if (Hitinfo[0] != null)
+        {
+            if (Hitinfo[0].collider.gameObject.CompareTag("Player"))
+            {
+                Debug.Log("Player Seen");
+            }
+        }
+        
+
+        Debug.DrawRay(transform.position, transform.right * SightDistance, Color.red);
+
+    }
+
 
     private void UpdateWanderState()
     {
@@ -78,7 +116,7 @@ public class ZombieScript : MonoBehaviour
             }
             else // else stop and do nothing;
             {
-                CurrentDirection = Vector2.zero;
+                CurrentSpeed = 0;
             }
         }
 
@@ -90,7 +128,13 @@ public class ZombieScript : MonoBehaviour
 
     private Vector2 RandomDirection()
     {
-        return new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f));
+        float x, y;
+        x = Random.Range(-1.0f, 1.0f);
+        y = Random.Range(-1.0f, 1.0f);
+        Rotation = Mathf.Atan2(y, x);
+        transform.rotation = Quaternion.Euler(0f, 0f, Rotation);
+        return new Vector2(x, y);
+        
     }
 
 
