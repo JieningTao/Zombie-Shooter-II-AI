@@ -21,9 +21,12 @@ public class ZombieScript : MonoBehaviour
     private int WanderTimer;
     private int WanderDecisionMakingTime;
     private int RandomNum;
-    private Vector2 CurrentDirection;
+    private Vector2 currentDirection;
+    private Vector2 promptLocation;
     private float Rotation;
     private float CurrentSpeed;
+    private int HitAmount;
+    private RaycastHit2D[] Hitinfo = new RaycastHit2D[10];
 
 
 
@@ -43,7 +46,7 @@ public class ZombieScript : MonoBehaviour
     {
         Rotation = 0;
         WanderTimer = 0;
-        CurrentState = ZombieState.Wandering;
+        CurrentState = ZombieState.Chase;
         WanderDecisionMakingTime = Random.Range(0, WanderingDecisionInterval);
     }
 
@@ -53,6 +56,8 @@ public class ZombieScript : MonoBehaviour
         switch (CurrentState)
         {
             case ZombieState.Wandering: UpdateWanderState(); break;
+            case ZombieState.Chase: UpdateChaseState(); break;
+
         }
 
         Movement();
@@ -65,46 +70,49 @@ public class ZombieScript : MonoBehaviour
 
     private void Movement()
     {
-
+        /*
         if (CurrentState == ZombieState.Wandering)
             CurrentSpeed = WanderSpeed;
         else
             CurrentSpeed = ChaseSpeed;
+            */
 
-        ZombieRigidBody2D.velocity = CurrentDirection * CurrentSpeed;
 
-        transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(CurrentDirection.y,CurrentDirection.x)*Mathf.Rad2Deg);
+
+
+        ZombieRigidBody2D.velocity = currentDirection * CurrentSpeed;
+
+        transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(currentDirection.y,currentDirection.x)*Mathf.Rad2Deg);
     }
 
 
 
 
 
-    private void PlayerDetected()
+    private bool PlayerDetected()
     {
-        int HitAmount;
-        RaycastHit2D[] Hitinfo = new RaycastHit2D[10];
-        HitAmount = Physics2D.Raycast(transform.position, transform.right,IgnoreMyself,Hitinfo , SightDistance);
+        //returns true or false depending on if the raycast sees player;
+        Debug.DrawRay(transform.position, transform.right * SightDistance, Color.red);
 
-        //Debug.Log(this.name+" sees: "+Hitinfo[0].collider.gameObject.name);
-        if (Hitinfo[0] != null)
+        HitAmount = Physics2D.Raycast(transform.position, transform.right,IgnoreMyself,Hitinfo , SightDistance);
+        if (HitAmount>0)
         {
             if (Hitinfo[0].collider.gameObject.CompareTag("Player"))
             {
                 Debug.Log("Player Seen");
+                return true;
             }
         }
-        
-
-        Debug.DrawRay(transform.position, transform.right * SightDistance, Color.red);
-
+        return false;
     }
 
 
     private void UpdateWanderState()
     {
-
-
+        if (PlayerDetected())
+        {
+            this.CurrentState = ZombieState.Chase;
+        }
 
         //Everytime the Wander time is 0, a decision is made, usually random direction;
         if (WanderTimer == WanderDecisionMakingTime)
@@ -112,7 +120,8 @@ public class ZombieScript : MonoBehaviour
             RandomNum = Random.Range(0, 10);
             if (RandomNum < 4) //40% chance of random direction movement;
             {
-                CurrentDirection = RandomDirection();
+                currentDirection = RandomDirection();
+                CurrentSpeed = Random.Range(0, WanderSpeed);
             }
             else // else stop and do nothing;
             {
@@ -125,6 +134,22 @@ public class ZombieScript : MonoBehaviour
         if (WanderTimer == WanderingDecisionInterval)
             WanderTimer = 0;
     }
+
+    private void UpdateChaseState()
+    {
+        CurrentSpeed = ChaseSpeed;
+        if (PlayerDetected())
+        {
+            promptLocation = Hitinfo[0].transform.position;
+            currentDirection = new Vector2(promptLocation.x - transform.position.x, promptLocation.y - transform.position.y);
+            currentDirection.Normalize();
+        }
+        else if(!PlayerDetected()&&Mathf.Abs(promptLocation.x - transform.position.x)+Mathf.Abs(promptLocation.y - transform.position.y)<=2)
+        {
+            CurrentState = ZombieState.Wandering;
+        }
+    }
+
 
     private Vector2 RandomDirection()
     {
