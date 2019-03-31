@@ -68,7 +68,7 @@ public class ZombieScript : MonoBehaviour
 
         Movement();
         //PlayerDetected();
-        Debug.DrawRay(transform.position, transform.right * SightDistance, Color.red);
+        Debug.DrawRay(transform.position, transform.up * SightDistance, Color.red);
     }
 
 
@@ -89,7 +89,7 @@ public class ZombieScript : MonoBehaviour
 
         ZombieRigidBody2D.velocity = currentDirection * CurrentSpeed;
 
-        transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(currentDirection.y,currentDirection.x)*Mathf.Rad2Deg);
+        transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(currentDirection.y,currentDirection.x)*Mathf.Rad2Deg-90);
     }
 
 
@@ -101,7 +101,7 @@ public class ZombieScript : MonoBehaviour
         //returns true or false depending on if the raycast sees player;
         
         
-        HitAmount = Physics2D.Raycast(transform.position, transform.right,IgnoreMyself,Hitinfo , SightDistance);
+        HitAmount = Physics2D.Raycast(transform.position, transform.up,IgnoreMyself,Hitinfo , SightDistance);
         if (HitAmount>0)
         {
             if (Hitinfo[0].collider.gameObject.CompareTag("Player"))
