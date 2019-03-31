@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ZombieScript : MonoBehaviour
 {
-    [SerializeField]
-    Rigidbody2D ZombieRigidBody2D;
+    
+    
 
     [SerializeField]
     private float ChaseSpeed = 5.0f;
@@ -27,6 +27,8 @@ public class ZombieScript : MonoBehaviour
     private float CurrentSpeed;
     private int HitAmount;
     private RaycastHit2D[] Hitinfo = new RaycastHit2D[10];
+    Rigidbody2D ZombieRigidBody2D;
+    private ZombieState CurrentState;
 
 
 
@@ -38,12 +40,16 @@ public class ZombieScript : MonoBehaviour
         Dead,
     }
 
-    private ZombieState CurrentState;
+    
 
+    
+
+    
 
     // Start is called before the first frame update
     void Start()
     {
+        ZombieRigidBody2D = GetComponent<Rigidbody2D>();
         Rotation = 0;
         WanderTimer = 0;
         CurrentState = ZombieState.Chase;
@@ -61,7 +67,8 @@ public class ZombieScript : MonoBehaviour
         }
 
         Movement();
-        PlayerDetected();
+        //PlayerDetected();
+        Debug.DrawRay(transform.position, transform.right * SightDistance, Color.red);
     }
 
 
@@ -92,8 +99,8 @@ public class ZombieScript : MonoBehaviour
     private bool PlayerDetected()
     {
         //returns true or false depending on if the raycast sees player;
-        Debug.DrawRay(transform.position, transform.right * SightDistance, Color.red);
-
+        
+        
         HitAmount = Physics2D.Raycast(transform.position, transform.right,IgnoreMyself,Hitinfo , SightDistance);
         if (HitAmount>0)
         {
@@ -121,6 +128,7 @@ public class ZombieScript : MonoBehaviour
             if (RandomNum < 4) //40% chance of random direction movement;
             {
                 currentDirection = RandomDirection();
+                
                 CurrentSpeed = Random.Range(0, WanderSpeed);
             }
             else // else stop and do nothing;
@@ -157,12 +165,21 @@ public class ZombieScript : MonoBehaviour
         x = Random.Range(-1.0f, 1.0f);
         y = Random.Range(-1.0f, 1.0f);
         Rotation = Mathf.Atan2(y, x);
-        transform.rotation = Quaternion.Euler(0f, 0f, Rotation);
+        
         return new Vector2(x, y);
         
     }
 
+    public void SetStateTo(ZombieState statetoSetTo)
+    {
+        CurrentState = statetoSetTo;
+    }
 
-
+    public void ChasePlayerAt(Vector2 playerLocation)
+    {
+        CurrentState = ZombieState.Chase;
+        promptLocation = playerLocation;
+        currentDirection = new Vector2(promptLocation.x - transform.position.x, promptLocation.y - transform.position.y).normalized;
+    }
 
 }
