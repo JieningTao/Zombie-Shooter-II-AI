@@ -2,22 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PistolScript : GunScript
+public class BulletScript : MonoBehaviour
 {
-
     // Start is called before the first frame update
     void Start()
     {
-        shellEject = GetComponent<ParticleSystem>();
+        
     }
 
-
-
-
-    protected override void  Fire()
+    // Update is called once per frame
+    void Update()
     {
-        base.Fire();
+        
     }
-
-
 }
