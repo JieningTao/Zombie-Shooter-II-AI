@@ -29,6 +29,7 @@ public class ZombieScript : MonoBehaviour
     private RaycastHit2D[] Hitinfo = new RaycastHit2D[10];
     Rigidbody2D ZombieRigidBody2D;
     private ZombieState CurrentState;
+    List<Vector2> nodesToFollow = new List<Vector2>();
 
 
 
@@ -161,7 +162,20 @@ public class ZombieScript : MonoBehaviour
 
     private void UpdateInvestigateState()
     {
-        
+        if (nodesToFollow.Count > 0)
+        {
+            if (Mathf.Abs(nodesToFollow[nodesToFollow.Count - 1].x - transform.position.x) + Mathf.Abs(nodesToFollow[nodesToFollow.Count].y - transform.position.y) <= 0.5)
+            {
+                nodesToFollow.Remove(nodesToFollow[nodesToFollow.Count - 1]);
+            }
+            TurnToNode(nodesToFollow[nodesToFollow.Count - 1]);
+        }
+        else
+        {
+            CurrentState = ZombieState.Wandering;
+        }
+
+
     }
 
     private Vector2 RandomDirection()
@@ -189,8 +203,17 @@ public class ZombieScript : MonoBehaviour
 
     public void InvestigateLocation(Vector2 locationOfInterest)
     {
+
+
+
+
         CurrentState = ZombieState.Investigate;
-        
     }
 
+
+    public void TurnToNode(Vector2 nextWaypoint)
+    {
+        currentDirection = new Vector2(nextWaypoint.x - transform.position.x, nextWaypoint.y - transform.position.y);
+        currentDirection.Normalize();
+    }
 }

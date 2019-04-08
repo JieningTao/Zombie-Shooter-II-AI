@@ -7,7 +7,7 @@ public class Node
     public Vector2 gridPosition;
 
     public bool blocked;
-    public Vector2 position;
+    public Vector3 position;
 
     public Node parent;
 
@@ -16,10 +16,10 @@ public class Node
 
     public int FCost { get { return gCost + hCost; } }
 
-    public Node(bool isBlocked, Vector2 postionOfnode, Vector2 positionOfNodeInGrid)
+    public Node(bool isBlocked, Vector3 positionOfNode, Vector2 positionOfNodeInGrid)
     {
         blocked = isBlocked;
-        position = positionOfNodeInGrid;
+        position = positionOfNode;
         gridPosition = positionOfNodeInGrid;
     }
 }

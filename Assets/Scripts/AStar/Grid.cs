@@ -50,6 +50,7 @@ public class Grid : MonoBehaviour
     {
         grid = new Node[gridSizeX, gridSizeY];
         Vector3 bottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
+        Debug.Log(bottomLeft);
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
@@ -62,38 +63,47 @@ public class Grid : MonoBehaviour
                     Wall = true;
                 }
 
+                Debug.Log(worldPoint);
                 grid[x, y] = new Node(Wall, worldPoint, new Vector2(x, y));
+
                 
-
-
+                Debug.Log(grid[x,y].position);
             }
         }
+        
     }
 
     private void OnDrawGizmos()
     {
         //Gizmos.DrawCube(Vector3.zero, Vector3.one);
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y, 0.2f));
-
+        Gizmos.DrawCube(new Vector3(-15.5f,-15.5f,0), Vector3.one * (nodeDiameter - Distance));
         if (grid != null)
         {
             foreach (Node node in grid)
             {
+                Color boxColor = new Color();
                 if (!node.blocked)
-                    Gizmos.color = Color.white;
+                    boxColor = Color.cyan;
                 else
-                    Gizmos.color = Color.yellow;
+                    boxColor = Color.yellow;
 
                 if (FinalPath != null)
-                    Gizmos.color = Color.red;
+                    boxColor = Color.red;
 
-                
+                Gizmos.color = boxColor;
 
+                Gizmos.DrawWireCube(node.position, Vector3.one * (nodeDiameter - Distance));
+
+                boxColor.a = 0.5f;
+                Gizmos.color = boxColor;
                 Gizmos.DrawCube(node.position, Vector3.one * (nodeDiameter - Distance));
 
             }
+            
         }
-
+        
+        
     }
 
 }
