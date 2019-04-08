@@ -63,6 +63,7 @@ public class ZombieScript : MonoBehaviour
         {
             case ZombieState.Wandering: UpdateWanderState(); break;
             case ZombieState.Chase: UpdateChaseState(); break;
+            case ZombieState.Investigate: UpdateInvestigateState(); break;
 
         }
 
@@ -158,6 +159,10 @@ public class ZombieScript : MonoBehaviour
         }
     }
 
+    private void UpdateInvestigateState()
+    {
+        
+    }
 
     private Vector2 RandomDirection()
     {
@@ -180,6 +185,12 @@ public class ZombieScript : MonoBehaviour
         CurrentState = ZombieState.Chase;
         promptLocation = playerLocation;
         currentDirection = new Vector2(promptLocation.x - transform.position.x, promptLocation.y - transform.position.y).normalized;
+    }
+
+    public void InvestigateLocation(Vector2 locationOfInterest)
+    {
+        CurrentState = ZombieState.Investigate;
+        
     }
 
 }
