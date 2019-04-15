@@ -40,12 +40,6 @@ public class Grid : MonoBehaviour
         CreateGrid();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
@@ -63,15 +57,57 @@ public class Grid : MonoBehaviour
                     Wall = true;
                 }
 
-                Debug.Log(worldPoint);
+                //Debug.Log(worldPoint);
                 grid[x, y] = new Node(Wall, worldPoint, new Vector2(x, y));
 
                 
-                Debug.Log(grid[x,y].position);
+                //Debug.Log(grid[x,y].position);
             }
         }
         
     }
+
+    public Node NodeFromWorldPos(Vector2 a_WorldPosition)
+    {
+        int x = Mathf.RoundToInt((gridSizeX - 1) * Mathf.Clamp01((a_WorldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x));
+        int y = Mathf.RoundToInt((gridSizeY - 1) * Mathf.Clamp01((a_WorldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y));
+
+        return grid[x, y];
+    }
+
+    public List<Node> GetNeighborNodes(Node a_Node)
+    {
+        List<Node> NeighborNodes = new List<Node>();
+        int xCheck;
+        int yCheck;
+
+        for (int i = -1; i < 2; i++)
+        {
+            for (int j = -1; j < 2; j++)
+            {
+                xCheck = (int)a_Node.gridPosition.x+i;
+                yCheck = (int)a_Node.gridPosition.y+j;
+                if (i == 0 && j == 0)
+                {
+
+                }
+                else
+                {
+                    if (xCheck >= 0 && xCheck < gridSizeX)
+                    {
+                        if (yCheck >= 0 && yCheck < gridSizeY)
+                        {
+                            NeighborNodes.Add(grid[xCheck, yCheck]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return NeighborNodes;
+    }
+
+
 
     private void OnDrawGizmos()
     {
@@ -88,8 +124,15 @@ public class Grid : MonoBehaviour
                 else
                     boxColor = Color.yellow;
 
-                if (FinalPath != null)
-                    boxColor = Color.red;
+                if (FinalPath != null )
+                {
+                    if (FinalPath.Contains(node))
+                    {
+                        boxColor = Color.red;
+                    }
+                    //boxColor = Color.red;
+                }
+                    
 
                 Gizmos.color = boxColor;
 
@@ -102,6 +145,8 @@ public class Grid : MonoBehaviour
             }
             
         }
+
+        
         
         
     }

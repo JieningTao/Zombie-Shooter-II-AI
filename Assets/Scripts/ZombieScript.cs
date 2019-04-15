@@ -17,10 +17,13 @@ public class ZombieScript : MonoBehaviour
     private float SightDistance = 10;
     [SerializeField]
     private ContactFilter2D IgnoreMyself;
+    [SerializeField]
+    private ZombieState CurrentState;
 
     private int WanderTimer;
     private int WanderDecisionMakingTime;
     private int RandomNum;
+    [SerializeField]
     private Vector2 currentDirection;
     private Vector2 promptLocation;
     private float Rotation;
@@ -28,7 +31,7 @@ public class ZombieScript : MonoBehaviour
     private int HitAmount;
     private RaycastHit2D[] Hitinfo = new RaycastHit2D[10];
     Rigidbody2D ZombieRigidBody2D;
-    private ZombieState CurrentState;
+   // private ZombieState CurrentState;
     List<Vector2> nodesToFollow = new List<Vector2>();
 
 
@@ -215,5 +218,18 @@ public class ZombieScript : MonoBehaviour
     {
         currentDirection = new Vector2(nextWaypoint.x - transform.position.x, nextWaypoint.y - transform.position.y);
         currentDirection.Normalize();
+    }
+
+    public List<Vector2> GenerateNodesToFollow(List<Node> FinalPath)
+    {
+        List<Vector2> FinalPathLocations = new List<Vector2>();
+
+        for (int i = 0; i < FinalPath.Count; i++)
+        {
+            FinalPathLocations.Add(FinalPath[i].position);
+        }
+
+
+        return FinalPathLocations;
     }
 }

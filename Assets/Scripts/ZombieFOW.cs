@@ -16,6 +16,7 @@ public class ZombieFOW : MonoBehaviour
     private LayerMask obstacleMask;
 
 
+
     void FindVisibleTargets()
     {
         Collider2D[] targetsInVisibleRadius = Physics2D.OverlapCircleAll(transform.position, SightDistance, targetMask);
@@ -56,7 +57,7 @@ public class ZombieFOW : MonoBehaviour
 
     private void debugdraw()
     {
-        Debug.DrawRay(transform.position, ( DirectionFromAngle(0 - SightAngle/2)) * SightDistance, Color.red);
+        Debug.DrawRay(transform.position, DirectionFromAngle(0 - SightAngle / 2) * SightDistance, Color.red);
         Debug.DrawRay(transform.position, DirectionFromAngle(0 + SightAngle / 2) * SightDistance, Color.red);
 
         //Debug.DrawRay(transform.position, (new Vector3(transform.right.x + DirectionFromAngle(SightAngle / 2).normalized.x, transform.right.y + DirectionFromAngle(SightAngle / 2).normalized.y,0) ) * SightDistance, Color.red);
