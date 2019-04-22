@@ -18,27 +18,21 @@ public class PlayerScript : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
 
         LookAtmouse();
-
-
-
-
-
-
-
         Movement();
+        HandleNoiseMaking();
     }
 
 
-    void LookAtmouse()
+    private void LookAtmouse()
     {
 
         var angle = Mathf.Atan2(Screen.height/2-Input.mousePosition.y, Screen.width/2-Input.mousePosition.x);
@@ -48,7 +42,7 @@ public class PlayerScript : MonoBehaviour
     }
 
 
-    void Movement()
+    private void Movement()
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
@@ -58,6 +52,28 @@ public class PlayerScript : MonoBehaviour
             MyRigidBody2D.velocity = movement * SprintSpeed;
         else
             MyRigidBody2D.velocity = movement * Speed;
+    }
+
+    private void HandleNoiseMaking()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            MakeSound(20);
+            Debug.Log("player made sound");
+        }
+    }
+
+    private void MakeSound(float radius)
+    {
+
+        Collider2D[] zombiesInRange = Physics2D.OverlapCircleAll(transform.position, radius);
+
+        foreach (Collider2D zombie in zombiesInRange)
+        {
+            if(zombie.CompareTag("Zombie"))
+            zombie.GetComponent<ZombieScript>().InvestigateLocation(transform.position);
+        }
+
     }
 
 

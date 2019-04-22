@@ -18,13 +18,16 @@ public class PathFinding : MonoBehaviour
         grid = GetComponent<Grid>();
     }
 
+    
     private void Update()
     {
-        FindPath(new Vector2( startPosition.position.x,startPosition.position.y), new Vector2(targetposition.position.x, targetposition.position.y));
+        //FindPath(new Vector2(startPosition.position.x,startPosition.position.y), new Vector2(targetposition.position.x, targetposition.position.y));
     }
+    
 
-    private void FindPath(Vector2 a_startPos, Vector2 a_targetPos)
+    public List<Vector2> FindPath(Vector2 a_startPos, Vector2 a_targetPos)
     {
+        grid.CreateGrid();
         Node startNode = grid.NodeFromWorldPos(a_startPos);
         Node targetNode = grid.NodeFromWorldPos(a_targetPos);
 
@@ -48,8 +51,7 @@ public class PathFinding : MonoBehaviour
 
             if (currentNode == targetNode)
             {
-                GetFinalPath(startNode,targetNode);
-                return;
+                return GetFinalPath(startNode, targetNode);
             }
 
             foreach (Node NeighborNode in grid.GetNeighborNodes(currentNode))
@@ -70,18 +72,22 @@ public class PathFinding : MonoBehaviour
             }
         }
 
-
+        return new List<Vector2>();
 
     }
 
-    private void GetFinalPath(Node a_startnode, Node a_endNode)
+
+    public List<Vector2> GetFinalPath(Node a_startnode, Node a_endNode)
     {
+
+        List<Vector2> FinalVectorPath = new List<Vector2>();
         List<Node> FinalPath = new List<Node>();
         Node currentNode = a_endNode;
 
         while (currentNode != a_startnode)
         {
             FinalPath.Add(currentNode);
+
             currentNode = currentNode.parent;
         }
 
@@ -91,7 +97,17 @@ public class PathFinding : MonoBehaviour
         FinalPath.Reverse();
 
         grid.FinalPath = FinalPath;
+
+        for (int i = 0; i < FinalPath.Count - 1; i++)
+        {
+            FinalVectorPath.Add(FinalPath[i].position);
+        }
+
+        return FinalVectorPath;
+
     }
+
+
 
     int GetManhattenDistance(Node a_nodeA, Node a_nodeB)
     {
@@ -100,4 +116,5 @@ public class PathFinding : MonoBehaviour
 
         return ix + iy;
     }
+
 }

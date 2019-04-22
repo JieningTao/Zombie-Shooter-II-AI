@@ -19,6 +19,7 @@ public class Grid : MonoBehaviour
 
     float nodeDiameter;
     int gridSizeX, gridSizeY;
+    private Transform parentTransform;
 
 
 
@@ -37,13 +38,18 @@ public class Grid : MonoBehaviour
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-        CreateGrid();
+        parentTransform = GetComponentInParent<Transform>();
     }
 
-    void CreateGrid()
+    private void FixedUpdate()
+    {
+        //CreateGrid();
+    }
+
+    public void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
-        Vector3 bottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
+        Vector3 bottomLeft = parentTransform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
         Debug.Log(bottomLeft);
         for (int x = 0; x < gridSizeX; x++)
         {
@@ -69,8 +75,8 @@ public class Grid : MonoBehaviour
 
     public Node NodeFromWorldPos(Vector2 a_WorldPosition)
     {
-        int x = Mathf.RoundToInt((gridSizeX - 1) * Mathf.Clamp01((a_WorldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x));
-        int y = Mathf.RoundToInt((gridSizeY - 1) * Mathf.Clamp01((a_WorldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y));
+        int x = Mathf.RoundToInt((gridSizeX - 1) * Mathf.Clamp01(((a_WorldPosition.x - parentTransform.position.x ) + gridWorldSize.x / 2) / gridWorldSize.x));
+        int y = Mathf.RoundToInt((gridSizeY - 1) * Mathf.Clamp01(((a_WorldPosition.y - parentTransform.position.y ) + gridWorldSize.y / 2) / gridWorldSize.y));
 
         return grid[x, y];
     }
@@ -106,7 +112,6 @@ public class Grid : MonoBehaviour
 
         return NeighborNodes;
     }
-
 
 
     private void OnDrawGizmos()

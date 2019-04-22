@@ -10,7 +10,9 @@ public class ZombieScript : MonoBehaviour
     [SerializeField]
     private float ChaseSpeed = 5.0f;
     [SerializeField]
-    private float WanderSpeed = 5.0f;
+    private float WanderSpeed = 1.0f;
+    [SerializeField]
+    private float InvestigateSpeed = 2.0f;
     [SerializeField]
     private int WanderingDecisionInterval = 100;
     [SerializeField]
@@ -167,11 +169,11 @@ public class ZombieScript : MonoBehaviour
     {
         if (nodesToFollow.Count > 0)
         {
-            if (Mathf.Abs(nodesToFollow[nodesToFollow.Count - 1].x - transform.position.x) + Mathf.Abs(nodesToFollow[nodesToFollow.Count].y - transform.position.y) <= 0.5)
+            if (Mathf.Abs(nodesToFollow[0].x - transform.position.x) + Mathf.Abs(nodesToFollow[0].y - transform.position.y) <= 0.5)
             {
-                nodesToFollow.Remove(nodesToFollow[nodesToFollow.Count - 1]);
+                nodesToFollow.Remove(nodesToFollow[0]);
             }
-            TurnToNode(nodesToFollow[nodesToFollow.Count - 1]);
+            TurnToNode(nodesToFollow[0]);
         }
         else
         {
@@ -206,11 +208,14 @@ public class ZombieScript : MonoBehaviour
 
     public void InvestigateLocation(Vector2 locationOfInterest)
     {
+        CurrentSpeed = WanderSpeed;
+        PathFinding aStarPathfinding = GetComponentInChildren<PathFinding>();
 
-
-
+        nodesToFollow = aStarPathfinding.FindPath(this.transform.position,locationOfInterest);
 
         CurrentState = ZombieState.Investigate;
+
+        Debug.Log(this.name + " Heard Player");
     }
 
 
@@ -218,18 +223,5 @@ public class ZombieScript : MonoBehaviour
     {
         currentDirection = new Vector2(nextWaypoint.x - transform.position.x, nextWaypoint.y - transform.position.y);
         currentDirection.Normalize();
-    }
-
-    public List<Vector2> GenerateNodesToFollow(List<Node> FinalPath)
-    {
-        List<Vector2> FinalPathLocations = new List<Vector2>();
-
-        for (int i = 0; i < FinalPath.Count; i++)
-        {
-            FinalPathLocations.Add(FinalPath[i].position);
-        }
-
-
-        return FinalPathLocations;
     }
 }
