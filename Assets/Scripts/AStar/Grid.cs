@@ -113,7 +113,7 @@ public class Grid : MonoBehaviour
         return NeighborNodes;
     }
 
-
+    /*
     private void OnDrawGizmos()
     {
         //Gizmos.DrawCube(Vector3.zero, Vector3.one);
@@ -155,5 +155,6 @@ public class Grid : MonoBehaviour
         
         
     }
+    */
 
 }

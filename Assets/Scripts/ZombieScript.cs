@@ -208,7 +208,7 @@ public class ZombieScript : MonoBehaviour
 
     public void InvestigateLocation(Vector2 locationOfInterest)
     {
-        CurrentSpeed = WanderSpeed;
+        CurrentSpeed = InvestigateSpeed;
         PathFinding aStarPathfinding = GetComponentInChildren<PathFinding>();
 
         nodesToFollow = aStarPathfinding.FindPath(this.transform.position,locationOfInterest);
