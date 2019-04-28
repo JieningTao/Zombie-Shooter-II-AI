@@ -14,6 +14,12 @@ public class ZombieScript : MonoBehaviour
     [SerializeField]
     private float InvestigateSpeed = 2.0f;
     [SerializeField]
+    private float huddleCheckRange = 30f;
+    [SerializeField]
+    private float huddleGroupRadiusPerZombie = 5f;
+    [SerializeField]
+    private LayerMask otherZombiesToSwarmTo;
+    [SerializeField]
     private int WanderingDecisionInterval = 100;
     [SerializeField]
     private float SightDistance = 10;
@@ -21,6 +27,7 @@ public class ZombieScript : MonoBehaviour
     private ContactFilter2D IgnoreMyself;
     [SerializeField]
     private ZombieState CurrentState;
+
 
     private int WanderTimer;
     private int WanderDecisionMakingTime;
@@ -35,6 +42,7 @@ public class ZombieScript : MonoBehaviour
     Rigidbody2D ZombieRigidBody2D;
    // private ZombieState CurrentState;
     List<Vector2> nodesToFollow = new List<Vector2>();
+    Collider2D[] nearbyZombieLocations;
 
 
 
@@ -58,9 +66,10 @@ public class ZombieScript : MonoBehaviour
         ZombieRigidBody2D = GetComponent<Rigidbody2D>();
         Rotation = 0;
         WanderTimer = 0;
-        CurrentState = ZombieState.Chase;
+        CurrentState = ZombieState.Wandering;
         WanderDecisionMakingTime = Random.Range(0, WanderingDecisionInterval);
     }
+
 
     // Update is called once per frame
     void Update()
@@ -99,9 +108,25 @@ public class ZombieScript : MonoBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(currentDirection.y,currentDirection.x)*Mathf.Rad2Deg-90);
     }
 
+    private Vector2 CheckSwarmCenter()
+    {
+        nearbyZombieLocations = Physics2D.OverlapCircleAll(transform.position, huddleCheckRange, otherZombiesToSwarmTo);
+
+        float averageX = 0;
+        float averageY = 0;
+
+        foreach (Collider2D Z in nearbyZombieLocations)
+        {
+            averageX += Z.transform.position.x;
+            averageY += Z.transform.position.y;
+        }
+        averageX = averageX / nearbyZombieLocations.Length;
+        averageY = averageY / nearbyZombieLocations.Length;
 
 
 
+        return new Vector2(averageX,averageY);
+    }
 
     private bool PlayerDetected()
     {
@@ -131,16 +156,25 @@ public class ZombieScript : MonoBehaviour
         //Everytime the Wander time is 0, a decision is made, usually random direction;
         if (WanderTimer == WanderDecisionMakingTime)
         {
-            RandomNum = Random.Range(0, 10);
-            if (RandomNum < 4) //40% chance of random direction movement;
+            Vector2 swarmCenter = CheckSwarmCenter();
+            if (Vector2.Distance(transform.position, swarmCenter) > nearbyZombieLocations.Length * huddleGroupRadiusPerZombie)
             {
-                currentDirection = RandomDirection();
-                
-                CurrentSpeed = Random.Range(0, WanderSpeed);
+                TurnToVector(swarmCenter);
+                CurrentSpeed = WanderSpeed * 1.5f;
             }
-            else // else stop and do nothing;
+            else
             {
-                CurrentSpeed = 0;
+                RandomNum = Random.Range(0, 10);
+                if (RandomNum < 4) //40% chance of random direction movement;
+                {
+                    currentDirection = RandomDirection();
+
+                    CurrentSpeed = Random.Range(0, WanderSpeed);
+                }
+                else // else stop and do nothing;
+                {
+                    CurrentSpeed = 0;
+                }
             }
         }
 
@@ -173,7 +207,7 @@ public class ZombieScript : MonoBehaviour
             {
                 nodesToFollow.Remove(nodesToFollow[0]);
             }
-            TurnToNode(nodesToFollow[0]);
+            TurnToVector(nodesToFollow[0]);
         }
         else
         {
@@ -219,7 +253,7 @@ public class ZombieScript : MonoBehaviour
     }
 
 
-    public void TurnToNode(Vector2 nextWaypoint)
+    public void TurnToVector(Vector2 nextWaypoint)
     {
         currentDirection = new Vector2(nextWaypoint.x - transform.position.x, nextWaypoint.y - transform.position.y);
         currentDirection.Normalize();

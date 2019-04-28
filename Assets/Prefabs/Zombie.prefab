@@ -164,6 +164,11 @@ MonoBehaviour:
   ChaseSpeed: 5
   WanderSpeed: 1
   InvestigateSpeed: 2
+  huddleCheckRange: 40
+  huddleGroupRadiusPerZombie: 1
+  otherZombiesToSwarmTo:
+    serializedVersion: 2
+    m_Bits: 256
   WanderingDecisionInterval: 100
   SightDistance: 20
   IgnoreMyself:
