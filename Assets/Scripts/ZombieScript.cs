@@ -26,7 +26,10 @@ public class ZombieScript : MonoBehaviour
     [SerializeField]
     private ContactFilter2D IgnoreMyself;
     [SerializeField]
-    private ZombieState CurrentState;
+    public ZombieState CurrentState {get; private set; }
+
+    [SerializeField]
+    private int health;
 
 
     private int WanderTimer;
@@ -52,6 +55,7 @@ public class ZombieScript : MonoBehaviour
         Investigate,
         Chase,
         Dead,
+        Attracted,
     }
 
     
@@ -199,6 +203,12 @@ public class ZombieScript : MonoBehaviour
         }
     }
 
+    private void UpdateAttracted()
+    {
+        CurrentSpeed = ChaseSpeed;
+        TurnToVector(promptLocation);
+    }
+
     private void UpdateInvestigateState()
     {
         if (nodesToFollow.Count > 0)
@@ -252,10 +262,26 @@ public class ZombieScript : MonoBehaviour
         Debug.Log(this.name + " Heard Player");
     }
 
+    public void AttractedToLocation(Vector2 bileLocation)
+    {
+        promptLocation = bileLocation;
+        this.CurrentState = ZombieState.Attracted;
+    }
+
+    public void AttractantDisappeared()
+    {
+        SetStateTo(ZombieState.Wandering);
+    }
+
 
     public void TurnToVector(Vector2 nextWaypoint)
     {
         currentDirection = new Vector2(nextWaypoint.x - transform.position.x, nextWaypoint.y - transform.position.y);
         currentDirection.Normalize();
+    }
+
+    public void HitByBullet(BulletScript bullet)
+    {
+
     }
 }
