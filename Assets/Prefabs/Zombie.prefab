@@ -185,7 +185,7 @@ MonoBehaviour:
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
-  CurrentState: 0
+  health: 10
   currentDirection: {x: 0, y: 0}
 --- !u!50 &2517316347003793793
 Rigidbody2D:

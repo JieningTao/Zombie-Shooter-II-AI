@@ -282,6 +282,8 @@ public class ZombieScript : MonoBehaviour
 
     public void HitByBullet(BulletScript bullet)
     {
-
+        health -= bullet.damage;
+        if (health <= 0)
+            Destroy(this.gameObject);
     }
 }
