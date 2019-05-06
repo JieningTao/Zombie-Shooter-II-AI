@@ -28,7 +28,7 @@ public class PlayerScript : MonoBehaviour
 
         LookAtmouse();
         Movement();
-        //HandleNoiseMaking();
+        HandleNoiseMaking();
     }
 
 

@@ -16,6 +16,7 @@ public class SmartBullet : BulletScript
         myRigidBody2D = GetComponent<Rigidbody2D>();
         Destroy(this.gameObject, despawnTime);
         myRigidBody2D.velocity = transform.up * bulletSpeed;
+        
     }
 
     private void FixedUpdate()
@@ -32,7 +33,7 @@ public class SmartBullet : BulletScript
                 transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - Target.transform.position.y, transform.position.x - Target.transform.position.x) + 90);
                 myRigidBody2D.velocity = transform.up * 40;
             }
-            else if (GetDegreeBetweenTargetAndHeading() < 90)
+            else if (GetDegreeBetweenTargetAndHeading() < 135)
             {
                 float currentDegree = Mathf.Rad2Deg * (Mathf.Atan2(myRigidBody2D.velocity.y, myRigidBody2D.velocity.x));
                 float targetDegree = Mathf.Rad2Deg * (Mathf.Atan2(transform.position.y - Target.transform.position.y, transform.position.x - Target.transform.position.x));
@@ -54,7 +55,10 @@ public class SmartBullet : BulletScript
 
     private float GetDegreeBetweenTargetAndHeading()
     {
+       Debug.Log(Mathf.Abs(Vector2.Angle((transform.position - Target.transform.position).normalized, myRigidBody2D.velocity.normalized) -180));
+       
         return Mathf.Abs(Vector2.Angle((transform.position - Target.transform.position).normalized, myRigidBody2D.velocity.normalized)-180);
+        
     }
 
     private void OnDrawGizmos()
@@ -64,14 +68,14 @@ public class SmartBullet : BulletScript
 
     private void RotateLeft()
     {
-        transform.Rotate(Vector3.forward, turnPower * Time.deltaTime);
-        myRigidBody2D.velocity = transform.up * 40;
+        transform.Rotate(Vector3.forward, -turnPower * Time.deltaTime);
+        myRigidBody2D.velocity = transform.up * bulletSpeed;
     }
 
     private void RotateRight()
     {
         transform.Rotate(Vector3.forward, turnPower * Time.deltaTime);
-        myRigidBody2D.velocity = transform.up * 40;
+        myRigidBody2D.velocity = transform.up * bulletSpeed;
     }
 
 
