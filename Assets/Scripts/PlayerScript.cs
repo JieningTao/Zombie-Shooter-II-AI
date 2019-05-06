@@ -56,9 +56,9 @@ public class PlayerScript : MonoBehaviour
 
     private void HandleNoiseMaking()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            MakeSound(20);
+            MakeSound(5);
             Debug.Log("player made sound");
         }
     }

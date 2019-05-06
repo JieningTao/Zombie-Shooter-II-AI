@@ -136,4 +136,4 @@ MonoBehaviour:
   bulletSpeed: 40
   despawnTime: 5
   Target: {fileID: 0}
-  turnPower: 100
+  turnPower: 180

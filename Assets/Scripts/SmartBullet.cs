@@ -28,14 +28,14 @@ public class SmartBullet : BulletScript
         else
         {
             
-            if (GetDegreeBetweenTargetAndHeading() < 5f)
+            if (GetDegreeBetweenTargetAndHeading() < 1f)
             {
                 transform.rotation = Quaternion.Euler(0, 0, Mathf.Rad2Deg * Mathf.Atan2(transform.position.y - Target.transform.position.y, transform.position.x - Target.transform.position.x) + 90);
-                myRigidBody2D.velocity = transform.up * 40;
+                myRigidBody2D.velocity = transform.up * bulletSpeed;
             }
             else if (GetDegreeBetweenTargetAndHeading() < 135)
             {
-                float currentDegree = Mathf.Rad2Deg * (Mathf.Atan2(myRigidBody2D.velocity.y, myRigidBody2D.velocity.x));
+                float currentDegree = transform.rotation.z;
                 float targetDegree = Mathf.Rad2Deg * (Mathf.Atan2(transform.position.y - Target.transform.position.y, transform.position.x - Target.transform.position.x));
 
                 if (currentDegree < targetDegree)
